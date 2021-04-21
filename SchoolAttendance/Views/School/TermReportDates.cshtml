@@ -1,0 +1,44 @@
+﻿@model SchoolAttendance.DTO.TermReportDTO
+@{
+    ViewBag.Title = "Term Report Dates";
+}
+
+<h2>Select Dates</h2>
+
+@using (Html.BeginForm())
+{
+    <table class="table">
+        <tr>
+            <td>
+                <div>
+                    <span>From Date:</span>
+                    <input type="date" id="datefrom" name="datefrom" />
+                </div>
+            </td>
+            <td>
+                <div>
+                    <span>To Date:</span>
+                    <input type="date" id="dateto" name="dateto" />
+                </div>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" value="Submit">
+}
+
+@*<link rel="stylesheet" href="/resources/demos/style.css"
+    @section scripts
+    {
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script>
+            $(document).ready(function () {
+                $(".datepicker").datepicker({
+                    dateFormat: "dd-mm-yy",
+                    changemonth: true,
+                    changeyear: true,
+                    start
+                });
+            });
+        </script>
+    }*@

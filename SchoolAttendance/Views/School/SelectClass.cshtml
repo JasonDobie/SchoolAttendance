@@ -1,0 +1,56 @@
+﻿@model SchoolAttendance.DTO.SelectClassDTO
+
+@{
+    if (ViewBag.RegisterAttend == "Register")
+    {
+        ViewData["Title"] = "Register Students";
+    }
+    else
+    {
+        ViewData["Title"] = "Student Attendance";
+    }
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (ViewBag.RegisterAttend == "Register")
+{
+    <h1>Register Students</h1>
+    <br />
+    <p>
+        <a asp-action="Create">Register New</a>
+    </p>
+}
+else
+{
+    <h1>Student Attendance</h1>
+    <br />
+}
+<br />
+@using (Html.BeginForm("SelectClass", "School", FormMethod.Post))
+{
+    <input type="hidden" id="registerAttend" name="registerAttend" value="@ViewBag.RegisterAttend" />
+    <div class="row">
+        <div class="col-md-3">
+            @Html.DropDownListFor(m => m.SelectedSchoolClass,
+             new SelectList(ViewBag.Classes, "Id", "ClassName"))
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-3">
+            @Html.DropDownListFor(m => m.SelectedHourOfDay,
+             new SelectList(ViewBag.HoursOfDay, "HourOfDay", "HourOfDayText"))
+        </div>
+        <div class="col-md-9">
+            <input type="submit" value="Submit" />
+        </div>
+    </div>
+    <br />
+    <div>
+        <a asp-controller="Home" asp-action="Index">Back to Home</a>
+    </div>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

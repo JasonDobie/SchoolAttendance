@@ -1,0 +1,48 @@
+﻿@model SchoolAttendance.DTO.AttendanceDTO
+
+@{
+    ViewData["Title"] = "Student Attendance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Student Attendance</h1>
+
+<h4>Attendance</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="StudentAttendance">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+            <table>
+                @for (int i = 0; i < Model.Attendances.Count; i++)
+                {
+                <tr>
+                    <td hidden="hidden">
+                        @Html.HiddenFor(m => Model.Attendances[i].Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => Model.Attendances[i].FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => Model.Attendances[i].LastName)
+                    </td>
+                    <td>
+                        @Html.CheckBoxFor(m => Model.Attendances[i].Attended)
+                    </td>
+                </tr>
+                }
+            </table>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

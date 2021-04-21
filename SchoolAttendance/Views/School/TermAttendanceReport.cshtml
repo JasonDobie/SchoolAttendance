@@ -1,0 +1,55 @@
+﻿@model IEnumerable<SchoolAttendance.Models.Attendance>
+
+@{
+    ViewData["Title"] = "TermAttendanceReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>TermAttendanceReport</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.StudentRegistration.SchoolClass.ClassName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StudentRegistration.SchoolClass.Grade)
+            </th>
+            <th>
+                Full Name
+            </th>
+            <th>
+                Classes Attended
+            </th>
+            <th>
+                Classes Missed
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.StudentRegistration.SchoolClass.ClassName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StudentRegistration.SchoolClass.Grade)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StudentRegistration.Student.FirstName)
+                @Html.DisplayNameFor(modelItem => item.StudentRegistration.Student.FirstName)
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,58 @@
+﻿@model IEnumerable<SchoolAttendance.Models.Attendance>
+
+@{
+    ViewData["Title"] = "Daily Attendance Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Daily Attendance Report</h1>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Class Name
+            </th>
+            <th>
+                Grade
+            </th>
+            <th>
+                Date
+            </th>
+            <th>
+                Time
+            </th>
+            <th>
+                Student Name
+            </th>
+            <th>
+                Attended
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.StudentRegistration.SchoolClass.ClassName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StudentRegistration.SchoolClass.Grade)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClassDate.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StudentRegistration.HourOfDay)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StudentRegistration.Student.FirstName)
+                @Html.DisplayFor(modelItem => item.StudentRegistration.Student.LastName)
+            </td>
+            <td>
+                @Html.CheckBoxFor(modelItem => item.Attended)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
