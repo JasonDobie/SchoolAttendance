@@ -92,8 +92,14 @@ namespace SchoolAttendance.Repository
                 var attendances = SchoolDbContext.Set<Attendance>().FirstOrDefault(a => a.ClassDate.Date == DateTime.Now.Date);
                 if (attendances != null)
                 {
-                    // Attendances have already been scheduled for today. Create attendances for new student
+                    // Attendances have already been scheduled for today. Create attendance for new student
+                    Attendance attendance = new Attendance();
+                    attendance.ClassDate = DateTime.Now;
+                    attendance.StudentRegistration = studentRegistration;
+                    attendance.Attended = false;
 
+                    await SchoolDbContext.AddAsync(attendance);
+                    await SchoolDbContext.SaveChangesAsync();
                 }
 
                 return studentRegistration;
@@ -250,6 +256,9 @@ namespace SchoolAttendance.Repository
                     .Include(a => a.StudentRegistration.SchoolClass)
                     .Include(a => a.StudentRegistration)
                     .ThenInclude(sr => sr.Student)
+                    .OrderBy(a => a.StudentRegistration.SchoolClass)
+                    .ThenBy(a => a.StudentRegistration.Student.LastName)
+                    .ThenBy(a => a.StudentRegistration.Student.FirstName)
                     .Where(a => a.ClassDate.Date == System.DateTime.Now.Date).ToListAsync();
             }
             catch (Exception ex)
@@ -262,6 +271,7 @@ namespace SchoolAttendance.Repository
         {
             try
             {
+                dateTo = dateTo.AddDays(1); // Ensure today's date is included
                 string sql = $@"
                     select ClassName, Grade, FirstName + " + new string("' '") + $@" + LastName,
 	                    (select count(*) from Attendances a1 inner join StudentRegistrations sr2 on sr2.Id = a1.StudentRegistrationId 

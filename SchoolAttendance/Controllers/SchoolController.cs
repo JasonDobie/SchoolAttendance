@@ -161,6 +161,9 @@ namespace SchoolAttendance.Controllers
         [HttpGet]
         public IActionResult TermReportDates()
         {
+            ViewBag.FromDate = DateTime.Now.AddDays(-7).Date.ToString("yyyy-MM-dd");
+            ViewBag.ToDate = DateTime.Now.Date.ToString("yyyy-MM-dd");
+
             var termDates = new TermReportDTO();
 
             return View(termDates);

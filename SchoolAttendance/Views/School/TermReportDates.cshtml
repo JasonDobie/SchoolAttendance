@@ -4,41 +4,27 @@
 }
 
 <h2>Select Dates</h2>
-
 @using (Html.BeginForm())
 {
     <table class="table">
         <tr>
             <td>
                 <div>
-                    <span>From Date:</span>
-                    <input type="date" id="datefrom" name="datefrom" />
+                    <br />
+                    <span>From Date:&nbsp;&nbsp;</span>
+                    <input type="date" id="datefrom" name="datefrom" value="@ViewBag.FromDate"/>
                 </div>
             </td>
             <td>
                 <div>
-                    <span>To Date:</span>
-                    <input type="date" id="dateto" name="dateto" />
+                    <br />
+                    <span>To Date:&nbsp;&nbsp;</span>
+                    <input type="date" id="dateto" name="dateto" value="@ViewBag.ToDate"/>
                 </div>
             </td>
         </tr>
     </table>
+    <br />
+    <br />
     <input type="submit" value="Submit">
 }
-
-@*<link rel="stylesheet" href="/resources/demos/style.css"
-    @section scripts
-    {
-        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <script>
-            $(document).ready(function () {
-                $(".datepicker").datepicker({
-                    dateFormat: "dd-mm-yy",
-                    changemonth: true,
-                    changeyear: true,
-                    start
-                });
-            });
-        </script>
-    }*@
