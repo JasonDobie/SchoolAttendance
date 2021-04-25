@@ -1,53 +1,50 @@
-﻿@model IEnumerable<SchoolAttendance.Models.Attendance>
+﻿@model IEnumerable<SchoolAttendance.Models.TermReportModel>
 
 @{
-    ViewData["Title"] = "TermAttendanceReport";
+    ViewData["Title"] = "Term Attendance Report";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>TermAttendanceReport</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<h1>Term Attendance Report</h1>
+<br />
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.StudentRegistration.SchoolClass.ClassName)
+                @Html.DisplayNameFor(model => model.ClassName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StudentRegistration.SchoolClass.Grade)
+                @Html.DisplayNameFor(model => model.Grade)
             </th>
             <th>
-                Full Name
+                @Html.DisplayNameFor(model => model.StudentName)
             </th>
             <th>
-                Classes Attended
+                @Html.DisplayNameFor(model => model.ClassesAttended)
             </th>
             <th>
-                Classes Missed
+                @Html.DisplayNameFor(model => model.ClassesMissed)
             </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.StudentRegistration.SchoolClass.ClassName)
+                @Html.DisplayFor(modelItem => item.ClassName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StudentRegistration.SchoolClass.Grade)
+                @Html.DisplayFor(modelItem => item.Grade)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StudentRegistration.Student.FirstName)
-                @Html.DisplayNameFor(modelItem => item.StudentRegistration.Student.FirstName)
+                @Html.DisplayFor(modelItem => item.StudentName)
             </td>
             <td>
-
+                @Html.DisplayFor(modelItem => item.ClassesAttended)
             </td>
             <td>
-
+                @Html.DisplayFor(modelItem => item.ClassesMissed)
             </td>
         </tr>
 }

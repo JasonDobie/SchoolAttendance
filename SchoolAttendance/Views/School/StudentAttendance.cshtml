@@ -1,44 +1,56 @@
-﻿@model SchoolAttendance.DTO.AttendanceDTO
+﻿@model SchoolAttendance.Models.AttendanceModel
 
 @{
     ViewData["Title"] = "Student Attendance";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@using (Html.BeginForm("StudentAttendance", "School"))
-{
-    <h1>Student Attendance</h1>
-    <br />
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th hidden="hidden">Id</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Attended</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < Model.Attendances.Count; i++)
+<h1>Student Attendance</h1>
+<br />
+<h4>Attendance</h4>
+<br />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="StudentAttendance">
+            <input type="hidden" id="schoolClassId" name="schoolClassId" value=@ViewBag.SchoolClassId />
+            <input type="hidden" id="hourOfDay" name="hourOfDay" value="@ViewBag.HourOfDay" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <table class="table" width="100%">
+                <thead>
+                    <tr>
+                        <th hidden="hidden">Id</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Attended</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Attendances.Count; i++)
             {
-                <tr>
-                    <td hidden="hidden">
-                        @Html.HiddenFor(m => Model.Attendances[i].Id)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(m => Model.Attendances[i].FirstName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(m => Model.Attendances[i].LastName)
-                    </td>
-                    <td>
-                        @Html.CheckBoxFor(m => Model.Attendances[i].Attended)
-                    </td>
-                </tr>
+                    <tr>
+                        <td hidden="hidden">
+                            @Html.HiddenFor(m => Model.Attendances[i].Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => Model.Attendances[i].FirstName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => Model.Attendances[i].LastName)
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(m => Model.Attendances[i].Attended)
+                        </td>
+                    </tr>
             }
-        </tbody>
-    </table>
-    <input type="submit" value="Save Attendances"/>
-}
+                </tbody>
+            </table>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
 
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

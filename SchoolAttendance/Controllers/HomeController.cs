@@ -20,9 +20,9 @@ namespace SchoolAttendance.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index(bool success)
+        public IActionResult Index(string message)
         {
-            ViewBag.Success = success;
+            ViewBag.Message = message;
             return View();
         }
 

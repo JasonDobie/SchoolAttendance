@@ -19,7 +19,7 @@ namespace SchoolAttendance.Data.Migrations
                     { 6, "Class 6", "12" }
                 });
 
-            migrationBuilder.InsertData(
+            /*migrationBuilder.InsertData(
                 table: "Students",
                 columns: new[] { "Id", "FirstName", "LastName", "IDNumber" },
                 values: new object[,]
@@ -35,7 +35,7 @@ namespace SchoolAttendance.Data.Migrations
                 {
                     { 1, 1, 1, "8 am" },
                     { 2, 1, 2, "8 am" },
-                });
+                });*/
 
             /*migrationBuilder.InsertData(
                 table: "Attendance",

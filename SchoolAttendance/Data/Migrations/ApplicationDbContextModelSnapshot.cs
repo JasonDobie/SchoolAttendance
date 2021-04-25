@@ -219,7 +219,7 @@ namespace SchoolAttendance.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("SchoolAttendance.Models.Attendance", b =>
+            modelBuilder.Entity("SchoolAttendance.Entities.Attendance", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -242,7 +242,7 @@ namespace SchoolAttendance.Data.Migrations
                     b.ToTable("Attendances");
                 });
 
-            modelBuilder.Entity("SchoolAttendance.Models.SchoolClass", b =>
+            modelBuilder.Entity("SchoolAttendance.Entities.SchoolClass", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -262,7 +262,7 @@ namespace SchoolAttendance.Data.Migrations
                     b.ToTable("Classes");
                 });
 
-            modelBuilder.Entity("SchoolAttendance.Models.Student", b =>
+            modelBuilder.Entity("SchoolAttendance.Entities.Student", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -286,7 +286,7 @@ namespace SchoolAttendance.Data.Migrations
                     b.ToTable("Students");
                 });
 
-            modelBuilder.Entity("SchoolAttendance.Models.StudentRegistration", b =>
+            modelBuilder.Entity("SchoolAttendance.Entities.StudentRegistration", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -362,22 +362,22 @@ namespace SchoolAttendance.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SchoolAttendance.Models.Attendance", b =>
+            modelBuilder.Entity("SchoolAttendance.Entities.Attendance", b =>
                 {
-                    b.HasOne("SchoolAttendance.Models.StudentRegistration", "StudentRegistration")
+                    b.HasOne("SchoolAttendance.Entities.StudentRegistration", "StudentRegistration")
                         .WithMany()
                         .HasForeignKey("StudentRegistrationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SchoolAttendance.Models.StudentRegistration", b =>
+            modelBuilder.Entity("SchoolAttendance.Entities.StudentRegistration", b =>
                 {
-                    b.HasOne("SchoolAttendance.Models.SchoolClass", "SchoolClass")
+                    b.HasOne("SchoolAttendance.Entities.SchoolClass", "SchoolClass")
                         .WithMany()
                         .HasForeignKey("SchoolClassId");
 
-                    b.HasOne("SchoolAttendance.Models.Student", "Student")
+                    b.HasOne("SchoolAttendance.Entities.Student", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId");
                 });

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using SchoolAttendance.Entities;
 using SchoolAttendance.Models;
 using SchoolAttendance.Repository;
 
@@ -61,9 +61,9 @@ namespace SchoolAttendance.Services
             return await SchoolRepository.ScheduleNewDay();
         }
 
-        public async Task<bool> UpdateAttendances(List<Attendance> attendances)
+        public async Task<bool> UpdateAttendances(AttendanceModel attendances, int schoolClassId, string hourOfDay)
         {
-            return await SchoolRepository.UpdateAttendances(attendances);
+            return await SchoolRepository.UpdateAttendances(attendances, schoolClassId, hourOfDay);
         }
 
         public async Task<List<Attendance>> GetDailyAttendanceReport()
@@ -71,7 +71,7 @@ namespace SchoolAttendance.Services
             return await SchoolRepository.GetDailyAttendanceReport();
         }
 
-        public List<Attendance> GetTermAttendanceReport(DateTime dateFrom, DateTime dateTo)
+        public List<TermReportModel> GetTermAttendanceReport(DateTime dateFrom, DateTime dateTo)
         {
             return SchoolRepository.GetTermAttendanceReport(dateFrom, dateTo);
         }

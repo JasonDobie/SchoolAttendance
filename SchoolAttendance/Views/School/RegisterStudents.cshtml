@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SchoolAttendance.Models.StudentRegistration>
+﻿@model IEnumerable<SchoolAttendance.Entities.StudentRegistration>
 
 @{
     ViewData["Title"] = "Register Students";
@@ -8,7 +8,7 @@
 <h1>Register Students</h1>
 <br />
 <p>
-    <a asp-action="AddStudent" asp-route-schoolClassId=@ViewBag.SchoolClassId asp-route-hourOfDay=@ViewBag.HourOfDay>Add New Student</a>
+    <a asp-action="AddStudent" asp-route-schoolClassId=@ViewBag.SchoolClassId asp-route-hourOfDay=@ViewBag.HourOfDay>Add New Student(s)</a>
 </p>
 <br />
 @using (Html.BeginForm("RegisterStudents", "School", FormMethod.Post))

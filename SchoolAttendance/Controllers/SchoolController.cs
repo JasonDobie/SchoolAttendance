@@ -3,13 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using SchoolAttendance.Data;
 using SchoolAttendance.DTO;
+using SchoolAttendance.Entities;
 using SchoolAttendance.Models;
 using SchoolAttendance.Services;
 
@@ -82,8 +78,6 @@ namespace SchoolAttendance.Controllers
             int schoolClassId = Convert.ToInt32(Request.Form["schoolClassId"]);
             string hourOfDay = Request.Form["hourOfDay"];
 
-            StudentRegistration studentRegistrationNew = new StudentRegistration();
-
             if (ModelState.IsValid)
             {
                 var studentNew = await SchoolService.AddStudent(student);
@@ -96,7 +90,7 @@ namespace SchoolAttendance.Controllers
                 studentRegistration.Student = studentNew;
                 studentRegistration.HourOfDay = hourOfDay;
 
-                studentRegistrationNew = await SchoolService.AddStudentRegistration(studentRegistration);
+                await SchoolService.AddStudentRegistration(studentRegistration);
             }
 
             return RedirectToAction("AddStudent", new { schoolClassId = schoolClassId, hourOfDay = hourOfDay });
@@ -112,36 +106,27 @@ namespace SchoolAttendance.Controllers
 
         public async Task<IActionResult> ScheduleNewDay()
         {
-            await SchoolService.ScheduleNewDay();
+            bool success = await SchoolService.ScheduleNewDay();
 
-            ViewBag.Success = true;
+            string message = string.Empty;
+            if (success)
+                message = "New Day Scheduled Successfully";
+            else
+                message = "There are no students registered yet. Please register students first";
 
-            return RedirectToAction("Index", "Home", new { success = true } );
+            return RedirectToAction("Index", "Home", new { message = message } );
         }
 
         [HttpGet]
         public async Task<IActionResult> StudentAttendance(int schoolClassId, string hourOfDay)
         {
-            /*ViewBag.Classes = await SchoolService.GetClasses();
-
-            List<HourOfDayList> hoursOfDay = new List<HourOfDayList> {
-                new HourOfDayList { HourOfDay = "8 am", HourOfDayText = "8 am" },
-                new HourOfDayList { HourOfDay = "9 am", HourOfDayText = "9 am" },
-                new HourOfDayList { HourOfDay = "10 am", HourOfDayText = "10 am" },
-                new HourOfDayList { HourOfDay = "11 am", HourOfDayText = "11 am" },
-                new HourOfDayList { HourOfDay = "1 pm", HourOfDayText = "1 pm" },
-                new HourOfDayList { HourOfDay = "2 pm", HourOfDayText = "2 pm" },
-                };
-            ViewBag.HoursOfDay = hoursOfDay;
-
-            return View(new SelectClassDTO());*/
-
-            ViewBag.RegisterAttend = "Attend";
+            ViewBag.SchoolClassId = schoolClassId;
+            ViewBag.HourOfDay = hourOfDay;
 
             List<Attendance> attendances = await SchoolService.GetAttendancesForDay(schoolClassId, hourOfDay);
 
-            AttendanceDTO attendanceDTO = new AttendanceDTO();
-            attendanceDTO.Attendances = attendances.Select(a => new AttendanceItem()
+            AttendanceModel attendanceModel = new AttendanceModel();
+            attendanceModel.Attendances = attendances.Select(a => new AttendanceItem()
             {
                 Id = a.Id,
                 FirstName = a.StudentRegistration.Student.FirstName,
@@ -149,36 +134,21 @@ namespace SchoolAttendance.Controllers
                 Attended = a.Attended
             }).ToList();
 
-            //List<AttendanceDTO> attendanceDTOs = new List<AttendanceDTO>();
-            //foreach (var attendance in attendances)
-            //{
-            //    attendanceDTOs.Add(new AttendanceDTO { Id = attendance.Id,
-            //                                           FirstName = attendance.StudentRegistration.Student.FirstName,
-            //                                           LastName = attendance.StudentRegistration.Student.LastName,
-            //                                           Attended = attendance.Attended });
-            //}
-
-            return View(attendanceDTO);
+            return View(attendanceModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult StudentAttendance(AttendanceDTO attendances)
+        public async Task<IActionResult> StudentAttendance(AttendanceModel attendancesResult)
         {
-            //await SchoolService.UpdateAttendances(attendances);
-            //foreach (var item in attendances.Attendances)
-            //{
+            int schoolClassId = Convert.ToInt32(Request.Form["schoolClassId"]);
+            string hourOfDay = Request.Form["hourOfDay"];
 
-            //}
-            
+            await SchoolService.UpdateAttendances(attendancesResult, schoolClassId, hourOfDay);
 
-            return RedirectToAction("Index", "Home");
-        }
+            string message = "Attendances Updated Successfully";
 
-
-        public bool SaveAttendances(IEnumerable<AttendanceDTO> attendances)
-        {
-            return true;
+            return RedirectToAction("Index", "Home", new { message = message } );
         }
 
         public async Task<IActionResult> DailyAttendanceReport()
@@ -209,7 +179,7 @@ namespace SchoolAttendance.Controllers
 
         public IActionResult TermAttendanceReport(DateTime dateFrom, DateTime dateTo)
         {
-            List<Attendance> attendances = SchoolService.GetTermAttendanceReport(dateFrom, dateTo);
+            List<TermReportModel> attendances = SchoolService.GetTermAttendanceReport(dateFrom, dateTo);
 
             return View(attendances);
         }

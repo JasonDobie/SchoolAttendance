@@ -16,9 +16,6 @@
 {
     <h1>Register Students</h1>
     <br />
-    <p>
-        <a asp-action="Create">Register New</a>
-    </p>
 }
 else
 {
@@ -31,26 +28,33 @@ else
     <input type="hidden" id="registerAttend" name="registerAttend" value="@ViewBag.RegisterAttend" />
     <div class="row">
         <div class="col-md-3">
+            <span>Please Select a Class:</span>
+        </div>
+        <div class="col-md-3">
             @Html.DropDownListFor(m => m.SelectedSchoolClass,
-             new SelectList(ViewBag.Classes, "Id", "ClassName"))
+                new SelectList(ViewBag.Classes, "Id", "ClassName"))
         </div>
     </div>
     <br />
     <div class="row">
         <div class="col-md-3">
-            @Html.DropDownListFor(m => m.SelectedHourOfDay,
-             new SelectList(ViewBag.HoursOfDay, "HourOfDay", "HourOfDayText"))
+            <span>Please Select an Hour of the Day:</span>
         </div>
+        <div class="col-md-3">
+            @Html.DropDownListFor(m => m.SelectedHourOfDay,
+                new SelectList(ViewBag.HoursOfDay, "HourOfDay", "HourOfDayText"))
+        </div>
+    </div>
+    <br />
+    <br>
+    <div class="row">
         <div class="col-md-9">
             <input type="submit" value="Submit" />
         </div>
     </div>
     <br />
-    <div>
-        <a asp-controller="Home" asp-action="Index">Back to Home</a>
-    </div>
-}
+    }
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+        @section Scripts {
+            @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        }

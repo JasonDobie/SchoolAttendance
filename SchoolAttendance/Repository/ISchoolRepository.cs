@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using SchoolAttendance.Data;
+using SchoolAttendance.Entities;
 using SchoolAttendance.Models;
 
 namespace SchoolAttendance.Repository
@@ -18,8 +17,8 @@ namespace SchoolAttendance.Repository
         public void DeleteStudentRegistration(StudentRegistration studentRegistration);
         public Task<List<Attendance>> GetAttendancesForDay(int schoolClassId, string hourOfDay);
         public Task<bool> ScheduleNewDay();
-        public Task<bool> UpdateAttendances(List<Attendance> attendances);
+        public Task<bool> UpdateAttendances(AttendanceModel attendances, int schoolClassId, string hourOfDay);
         public Task<List<Attendance>> GetDailyAttendanceReport();
-        public List<Attendance> GetTermAttendanceReport(DateTime dateFrom, DateTime dateTo);
+        public List<TermReportModel> GetTermAttendanceReport(DateTime dateFrom, DateTime dateTo);
     }
 }

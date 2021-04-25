@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SchoolAttendance.Models;
-using SchoolAttendance.Data;
 using Microsoft.EntityFrameworkCore;
+using SchoolAttendance.Data;
+using SchoolAttendance.Entities;
+using SchoolAttendance.Models;
 
 namespace SchoolAttendance.Repository
 {
@@ -88,6 +89,13 @@ namespace SchoolAttendance.Repository
                 await SchoolDbContext.AddAsync(studentRegistration);
                 await SchoolDbContext.SaveChangesAsync();
 
+                var attendances = SchoolDbContext.Set<Attendance>().FirstOrDefault(a => a.ClassDate.Date == DateTime.Now.Date);
+                if (attendances != null)
+                {
+                    // Attendances have already been scheduled for today. Create attendances for new student
+
+                }
+
                 return studentRegistration;
             }
             catch (Exception ex)
@@ -120,6 +128,15 @@ namespace SchoolAttendance.Repository
 
             try
             {
+                var attendances = SchoolDbContext.Set<Attendance>()
+                    .Include(a => a.StudentRegistration)
+                    .Where(a => a.StudentRegistration.Id == studentRegistration.Id);
+                
+                foreach (var attendance in attendances)
+                {
+                    SchoolDbContext.Set<Attendance>().Remove(attendance);
+                }
+
                 SchoolDbContext.Students.Remove(studentRegistration.Student);
                 SchoolDbContext.StudentRegistrations.Remove(studentRegistration);
 
@@ -151,16 +168,13 @@ namespace SchoolAttendance.Repository
         {
             try
             {
-                // Ensure day does not get booked twice
-                var attendances = SchoolDbContext.Attendances;
-                foreach(var attendanceTemp in attendances)
-                {
-                    if (attendanceTemp.ClassDate.Date == System.DateTime.Now.Date)
-                    {
-                        return true;
-                    }
-                }
-                
+                if (SchoolDbContext.Set<Student>().Count() == 0)
+                    return false;
+
+                var existingAttendances = SchoolDbContext.Set<Attendance>().Any(a => a.ClassDate.Date == DateTime.Now.Date);
+                if (existingAttendances == true)
+                    return true;
+
                 var classes = await GetSchoolClasses();
                 foreach (var schoolClass in classes)
                 {
@@ -207,13 +221,23 @@ namespace SchoolAttendance.Repository
             }
         }
 
-        public async Task<bool> UpdateAttendances(List<Attendance> attendances)
+        public async Task<bool> UpdateAttendances(AttendanceModel attendancesResult, int schoolClassId, string hourOfDay)
         {
-            foreach (var attendance in attendances)
+            List<Attendance> attendances = await GetAttendancesForDay(schoolClassId, hourOfDay);
+
+            foreach (Attendance attendance in attendances)
             {
-                SchoolDbContext.Update(attendance);
-                await SchoolDbContext.SaveChangesAsync();
+                foreach (AttendanceItem item in attendancesResult.Attendances)
+                {
+                    if (item.Id == attendance.Id)
+                    {
+                        attendance.Attended = item.Attended;
+                        SchoolDbContext.Update(attendance);
+                        break;
+                    }
+                }
             }
+            await SchoolDbContext.SaveChangesAsync();
 
             return true;
         }
@@ -234,41 +258,40 @@ namespace SchoolAttendance.Repository
             }
         }
 
-        public List<Attendance> GetTermAttendanceReport(DateTime dateFrom, DateTime dateTo)
+        public List<TermReportModel> GetTermAttendanceReport(DateTime dateFrom, DateTime dateTo)
         {
             try
             {
-                //return await SchoolDbContext.Set<Attendance>()
-                //    .Include(a => a.StudentRegistration.SchoolClass)
-                //    .Include(a => a.StudentRegistration)
-                //    .ThenInclude(sr => sr.Student)
-                //    .Where(a => a.ClassDate.Date >= dateFrom.Date &&
-                //                a.ClassDate <= dateTo.Date).ToListAsync()
-
-                //var attendances = from attendance in SchoolDbContext.Set<Attendance>()
-                //    .Include(a => a.StudentRegistration.SchoolClass)
-                //    .Include(a => a.StudentRegistration)
-                //    .ThenInclude(sr => sr.Student)
-                //                  group attendance by attendance.StudentRegistration.Student.IDNumber into newAttendances
-                //                  orderby newAttendances.Key
-                //                  select newAttendances;
-
-
-                var attendances = SchoolDbContext.Attendances.FromSqlRaw($@"
-                    select ClassName, Grade, FirstName, LastName,
+                string sql = $@"
+                    select ClassName, Grade, FirstName + " + new string("' '") + $@" + LastName,
 	                    (select count(*) from Attendances a1 inner join StudentRegistrations sr2 on sr2.Id = a1.StudentRegistrationId 
 		                    where sr2.StudentId = s.Id and a1.Attended = 1),
 	                    (select count(*) from Attendances a1 inner join StudentRegistrations sr2 on sr2.Id = a1.StudentRegistrationId 
-		                    where sr2.StudentId = s.Id and a1.Attended = 0)
+		                    where sr2.StudentId = s.Id and a1.Attended = 0), a.classdate
                     from Students s
                     inner join StudentRegistrations sr on sr.StudentId = s.Id
                     inner join Classes c on c.Id = sr.SchoolClassId
                     inner join Attendances a on a.StudentRegistrationId = sr.Id
                     where a.ClassDate >= '{dateFrom.Date}' and a.ClassDate <= '{dateTo.Date}'
-                    group by ClassName, Grade, FirstName, LastName, StudentRegistrationId, s.Id"
-                );
+                    group by ClassName, Grade, FirstName, LastName, StudentRegistrationId, s.Id, a.classdate";
+                    
+                List<TermReportModel> attendances = new List<TermReportModel>();
 
-                return attendances.ToList();
+                using (var command = SchoolDbContext.Database.GetDbConnection().CreateCommand())
+                {
+                    command.CommandText = sql;
+                    SchoolDbContext.Database.OpenConnection();
+                    using (var result = command.ExecuteReader())
+                    {
+                        while (result.Read())
+                        {
+                            attendances.Add(new TermReportModel { ClassName = result[0].ToString(), Grade = result[1].ToString(),
+                                StudentName = result[2].ToString(), ClassesAttended = result[3].ToString(), ClassesMissed = result[4].ToString() });
+                        }
+                    }
+                }
+
+                return attendances;
             }
             catch (Exception ex)
             {
